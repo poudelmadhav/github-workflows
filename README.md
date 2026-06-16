@@ -2,7 +2,27 @@
 
 Reusable workflows for release management and branch syncing.
 
-## Workflows
+## Actions
+
+### Create Release
+
+Creates a GitHub release from `release/v*` or `hotfix/v*` branches.
+
+**Usage:**
+
+```yaml
+- uses: poudelmadhav/github-workflows@v3
+  with:
+    branch: ${{ github.event.pull_request.head.ref }}
+```
+
+**Inputs:**
+
+| Input    | Required | Description                                        |
+| -------- | -------- | -------------------------------------------------- |
+| `branch` | yes      | The merged branch name (e.g. `release/v1.1.0`)    |
+
+## Reusable Workflows
 
 ### 1. Create Release
 
@@ -22,7 +42,7 @@ on:
 jobs:
   create-release:
     if: github.event.pull_request.merged == true && (startsWith(github.event.pull_request.head.ref, 'release/') || startsWith(github.event.pull_request.head.ref, 'hotfix/'))
-    uses: poudelmadhav/github-workflows/.github/workflows/create-release.yml@v2
+    uses: poudelmadhav/github-workflows/.github/workflows/create-release.yml@v3
     with:
       branch: ${{ github.event.pull_request.head.ref }}
     permissions:
@@ -37,7 +57,7 @@ jobs:
 
 ### 2. Sync Main to Develop
 
-Creates a PR from a source branch (default: `main`) into a target branch (default: `develop`) and attempts auto-merge.
+Creates a PR from a source branch into a target branch and attempts auto-merge. Optionally auto-approves the PR using a PAT (useful when branch protection requires approvals).
 
 **Caller example:**
 
@@ -51,10 +71,11 @@ on:
 
 jobs:
   sync:
-    uses: poudelmadhav/github-workflows/.github/workflows/sync-main-to-develop.yml@v2
+    uses: poudelmadhav/github-workflows/.github/workflows/sync-main-to-develop.yml@v3
     with:
       source_branch: main
       target_branch: develop
+      approval_token: ${{ secrets.PAT_TOKEN }}
     permissions:
       contents: write
       pull-requests: write
@@ -62,7 +83,8 @@ jobs:
 
 **Inputs:**
 
-| Input           | Required | Default   | Description            |
-| --------------- | -------- | --------- | ---------------------- |
-| `source_branch` | no       | `main`    | Source branch name     |
-| `target_branch` | no       | `develop` | Target branch name     |
+| Input            | Required | Default   | Description                                                                 |
+| ---------------- | -------- | --------- | --------------------------------------------------------------------------- |
+| `source_branch`  | no       | `main`    | Source branch name                                                          |
+| `target_branch`  | no       | `develop` | Target branch name                                                          |
+| `approval_token` | no       | `""`      | PAT to auto-approve the PR. Falls back to `GITHUB_TOKEN` for auto-merge.    |

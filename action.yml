@@ -1,0 +1,26 @@
+name: Create Release
+description: Create a GitHub release from release/v* or hotfix/v* branches
+
+inputs:
+  branch:
+    description: The merged branch name (e.g. release/v1.1.0 or hotfix/v1.1.0)
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: Extract version
+      id: version
+      shell: bash
+      run: |
+        BRANCH="${{ inputs.branch }}"
+        VERSION="${BRANCH#release/}"
+        VERSION="${VERSION#hotfix/}"
+        echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+
+    - name: Create Release
+      uses: softprops/action-gh-release@v2
+      with:
+        tag_name: ${{ steps.version.outputs.version }}
+        name: ${{ steps.version.outputs.version }}
+        generate_release_notes: true
