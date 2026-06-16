@@ -1,0 +1,25 @@
+name: Create Release
+
+on:
+  workflow_call:
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Extract version
+        id: version
+        run: |
+          BRANCH="${{ github.ref_name }}"
+          VERSION="${BRANCH#release/}"
+          VERSION="${VERSION#hotfix/}"
+
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.version.outputs.version }}
+          name: ${{ steps.version.outputs.version }}
+          generate_release_notes: true
