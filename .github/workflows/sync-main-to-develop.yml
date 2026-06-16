@@ -21,6 +21,7 @@ jobs:
 
     permissions:
       contents: write
+      pull-requests: write
 
     steps:
       - name: Checkout repository
@@ -28,16 +29,30 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Configure Git
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-
-      - name: Sync main into develop
+      - name: Check if sync is needed
+        id: check
         run: |
           git fetch origin
+          AHEAD=$(git rev-list --count "origin/${{ inputs.develop_branch }}..origin/${{ inputs.main_branch }}")
+          echo "ahead=$AHEAD" >> "$GITHUB_OUTPUT"
+          if [ "$AHEAD" -gt 0 ]; then
+            echo "needs_sync=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "needs_sync=false" >> "$GITHUB_OUTPUT"
+          fi
 
-          git checkout "${{ inputs.develop_branch }}"
-          git merge "origin/${{ inputs.main_branch }}" --no-edit
+      - name: Create PR to sync main into develop
+        if: steps.check.outputs.needs_sync == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          PR_URL=$(gh pr create \
+            --base "${{ inputs.develop_branch }}" \
+            --head "${{ inputs.main_branch }}" \
+            --title "Sync ${{ inputs.main_branch }} into ${{ inputs.develop_branch }}" \
+            --body "Automatically syncing \`${{ inputs.main_branch }}\` into \`${{ inputs.develop_branch }}\`.")
 
-          git push origin "${{ inputs.develop_branch }}"
+          echo "Created PR: $PR_URL"
+
+          PR_NUMBER=$(echo "$PR_URL" | grep -oE '[0-9]+$')
+          gh pr merge "$PR_NUMBER" --auto --merge || echo "Auto-merge not available, PR left open"
