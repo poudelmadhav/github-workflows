@@ -8,6 +8,8 @@ Reusable workflows for release management and branch syncing.
 
 Creates a GitHub release from `release/v*` or `hotfix/v*` branches.
 
+This is the default/recommended way. The reusable workflow below (Create Release) is an alternative that achieves the same result.
+
 **Usage:**
 
 ```yaml
