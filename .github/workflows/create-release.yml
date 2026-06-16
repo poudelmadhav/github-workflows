@@ -2,6 +2,11 @@ name: Create Release
 
 on:
   workflow_call:
+    inputs:
+      branch:
+        description: The merged branch name (e.g. release/v1.1.0 or hotfix/v1.1.0)
+        required: true
+        type: string
 
 jobs:
   release:
@@ -11,7 +16,7 @@ jobs:
       - name: Extract version
         id: version
         run: |
-          BRANCH="${{ github.ref_name }}"
+          BRANCH="${{ inputs.branch }}"
           VERSION="${BRANCH#release/}"
           VERSION="${VERSION#hotfix/}"
 
