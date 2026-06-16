@@ -2,29 +2,9 @@
 
 Reusable workflows for release management and branch syncing.
 
-## Actions
+> **Private repos:** Go to this repo's Settings → Actions → General → Access and grant access to your org/repos, or use `secrets: inherit` with a PAT.
 
-### Create Release
-
-Creates a GitHub release from `release/v*` or `hotfix/v*` branches.
-
-This is the default/recommended way. The reusable workflow below (Create Release) is an alternative that achieves the same result.
-
-**Usage:**
-
-```yaml
-- uses: poudelmadhav/github-workflows@v3
-  with:
-    branch: ${{ github.event.pull_request.head.ref }}
-```
-
-**Inputs:**
-
-| Input    | Required | Description                                        |
-| -------- | -------- | -------------------------------------------------- |
-| `branch` | yes      | The merged branch name (e.g. `release/v1.1.0`)    |
-
-## Reusable Workflows
+## Workflows
 
 ### 1. Create Release
 
