@@ -63,11 +63,11 @@ jobs:
           echo "pr_number=$PR_NUMBER" >> "$GITHUB_ENV"
 
       - name: Auto-approve PR
-        if: steps.check.outputs.needs_sync == 'true' && secrets.approval_token != ''
+        if: steps.check.outputs.needs_sync == 'true'
         env:
           GH_TOKEN: ${{ secrets.approval_token }}
         run: |
-          gh pr review "${{ env.pr_number }}" --approve
+          gh pr review "${{ env.pr_number }}" --approve || echo "Auto-approve not available, PR left open"
 
       - name: Enable auto-merge
         if: steps.check.outputs.needs_sync == 'true'
