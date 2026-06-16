@@ -87,4 +87,4 @@ jobs:
 | ---------------- | -------- | --------- | --------------------------------------------------------------------------- |
 | `source_branch`  | no       | `main`    | Source branch name                                                          |
 | `target_branch`  | no       | `develop` | Target branch name                                                          |
-| `approval_token` | no       | `""`      | PAT to auto-approve the PR. Falls back to `GITHUB_TOKEN` for auto-merge.    |
+| `approval_token` | no       | `""`      | [PAT](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens) to auto-approve the PR. Falls back to `GITHUB_TOKEN` for auto-merge. |
