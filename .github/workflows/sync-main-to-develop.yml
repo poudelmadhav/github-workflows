@@ -3,14 +3,14 @@ name: Sync Main to Develop
 on:
   workflow_call:
     inputs:
-      main_branch:
-        description: Main branch name
+      source_branch:
+        description: Source branch name
         required: false
         default: main
         type: string
 
-      develop_branch:
-        description: Develop branch name
+      target_branch:
+        description: Target branch name
         required: false
         default: develop
         type: string
@@ -33,7 +33,7 @@ jobs:
         id: check
         run: |
           git fetch origin
-          AHEAD=$(git rev-list --count "origin/${{ inputs.develop_branch }}..origin/${{ inputs.main_branch }}")
+          AHEAD=$(git rev-list --count "origin/${{ inputs.target_branch }}..origin/${{ inputs.source_branch }}")
           echo "ahead=$AHEAD" >> "$GITHUB_OUTPUT"
           if [ "$AHEAD" -gt 0 ]; then
             echo "needs_sync=true" >> "$GITHUB_OUTPUT"
@@ -41,16 +41,16 @@ jobs:
             echo "needs_sync=false" >> "$GITHUB_OUTPUT"
           fi
 
-      - name: Create PR to sync main into develop
+      - name: Create PR to sync source into target
         if: steps.check.outputs.needs_sync == 'true'
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           PR_URL=$(gh pr create \
-            --base "${{ inputs.develop_branch }}" \
-            --head "${{ inputs.main_branch }}" \
-            --title "Sync ${{ inputs.main_branch }} into ${{ inputs.develop_branch }}" \
-            --body "Automatically syncing \`${{ inputs.main_branch }}\` into \`${{ inputs.develop_branch }}\`.")
+            --base "${{ inputs.target_branch }}" \
+            --head "${{ inputs.source_branch }}" \
+            --title "Sync ${{ inputs.source_branch }} into ${{ inputs.target_branch }}" \
+            --body "Automatically syncing \`${{ inputs.source_branch }}\` into \`${{ inputs.target_branch }}\`.")
 
           echo "Created PR: $PR_URL"
 
