@@ -15,11 +15,10 @@ on:
         default: develop
         type: string
 
+    secrets:
       approval_token:
         description: PAT with write access to auto-approve the PR. Falls back to GITHUB_TOKEN if not provided.
         required: false
-        default: ""
-        type: string
 
 jobs:
   sync:
@@ -64,9 +63,9 @@ jobs:
           echo "pr_number=$PR_NUMBER" >> "$GITHUB_ENV"
 
       - name: Auto-approve PR
-        if: steps.check.outputs.needs_sync == 'true' && inputs.approval_token != ''
+        if: steps.check.outputs.needs_sync == 'true' && secrets.approval_token != ''
         env:
-          GH_TOKEN: ${{ inputs.approval_token }}
+          GH_TOKEN: ${{ secrets.approval_token }}
         run: |
           gh pr review "${{ env.pr_number }}" --approve
 
