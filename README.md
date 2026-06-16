@@ -2,7 +2,7 @@
 
 Reusable workflows for release management and branch syncing.
 
-> **Private repos:** Go to this repo's Settings → Actions → General → Access and grant access to your org/repos, or use `secrets: inherit` with a PAT.
+> **Private repos:** Go to this repo's Settings → Actions → General → Access and grant access to your org/repos
 
 ## Workflows
 
