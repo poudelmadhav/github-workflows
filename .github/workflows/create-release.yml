@@ -8,6 +8,11 @@ on:
         required: true
         type: string
 
+      release_body:
+        description: Optional release body text. Falls back to auto-generated release notes if not provided.
+        required: false
+        type: string
+
 jobs:
   release:
     runs-on: ubuntu-latest
@@ -28,4 +33,5 @@ jobs:
         with:
           tag_name: ${{ steps.version.outputs.version }}
           name: ${{ steps.version.outputs.version }}
-          generate_release_notes: true
+          body: ${{ inputs.release_body }}
+          generate_release_notes: ${{ inputs.release_body == '' }}

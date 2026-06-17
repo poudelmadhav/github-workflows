@@ -10,7 +10,9 @@ Reusable workflows for release management and branch syncing.
 
 Creates a GitHub release from `release/v*` or `hotfix/v*` branches after they are merged into `main`.
 
-**Caller example:**
+**Caller examples:**
+
+With auto-generated release notes:
 
 ```yaml
 name: Create Release on Merge
@@ -31,11 +33,34 @@ jobs:
       contents: write
 ```
 
+With PR body as the release body:
+
+```yaml
+name: Create Release on Merge
+
+on:
+  pull_request_target:
+    types: [closed]
+    branches:
+      - main
+
+jobs:
+  create-release:
+    if: github.event.pull_request.merged == true && (startsWith(github.event.pull_request.head.ref, 'release/') || startsWith(github.event.pull_request.head.ref, 'hotfix/'))
+    uses: poudelmadhav/github-workflows/.github/workflows/create-release.yml@v3
+    with:
+      branch: ${{ github.event.pull_request.head.ref }}
+      release_body: ${{ github.event.pull_request.body }}
+    permissions:
+      contents: write
+```
+
 **Inputs:**
 
-| Input    | Required | Description                                        |
-| -------- | -------- | -------------------------------------------------- |
-| `branch` | yes      | The merged branch name (e.g. `release/v1.1.0`)    |
+| Input          | Required | Description                                                             |
+| -------------- | -------- | ----------------------------------------------------------------------- |
+| `branch`       | yes      | The merged branch name (e.g. `release/v1.1.0`)                          |
+| `release_body` | no       | Optional release body text. Falls back to auto-generated release notes. |
 
 ### 2. Sync Main to Develop
 
