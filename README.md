@@ -76,3 +76,34 @@ jobs:
 | Secret           | Required | Description                                                                 |
 | ---------------- | -------- | --------------------------------------------------------------------------- |
 | `approval_token` | no       | [PAT](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens) to auto-approve the PR. Falls back to `GITHUB_TOKEN` for auto-merge. |
+
+### 3. Ruby Tests
+
+Runs RuboCop and/or RSpec on Ruby projects. Supports explicit Ruby version, `.ruby-version` file auto-detection, and per-tool opt-out.
+
+**Caller example:**
+
+```yaml
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    uses: poudelmadhav/github-workflows/.github/workflows/ruby-tests.yml@v3
+    with:
+      ruby_version: 3.3
+      rubocop: false
+```
+
+**Inputs:**
+
+| Input          | Required | Default | Description                                                    |
+| -------------- | -------- | ------- | -------------------------------------------------------------- |
+| `ruby_version` | no       | —       | Ruby version. Falls back to `.ruby-version`, then `3.4`.       |
+| `rubocop`      | no       | `true`  | Run RuboCop                                                    |
+| `rspec`        | no       | `true`  | Run RSpec                                                      |

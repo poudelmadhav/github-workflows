@@ -1,0 +1,55 @@
+name: Ruby Tests
+
+on:
+  workflow_call:
+    inputs:
+      ruby_version:
+        description: Ruby version (e.g. 3.2.6, 3.4). Falls back to .ruby-version, then 3.4.
+        required: false
+        type: string
+
+      rubocop:
+        description: Run RuboCop
+        required: false
+        default: true
+        type: boolean
+
+      rspec:
+        description: Run RSpec
+        required: false
+        default: true
+        type: boolean
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Resolve Ruby version
+        id: ruby_version
+        shell: bash
+        run: |
+          if [ -n "${{ inputs.ruby_version }}" ]; then
+            echo "version=${{ inputs.ruby_version }}" >> "$GITHUB_OUTPUT"
+          elif [ -f .ruby-version ]; then
+            echo "version=$(cat .ruby-version)" >> "$GITHUB_OUTPUT"
+          else
+            echo "version=3.4" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ steps.ruby_version.outputs.version }}
+          bundler-cache: true
+
+      - name: Run RuboCop
+        if: ${{ inputs.rubocop }}
+        run: bundle exec rubocop
+
+      - name: Run RSpec
+        if: ${{ inputs.rspec }}
+        run: bundle exec rspec
