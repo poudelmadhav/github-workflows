@@ -65,7 +65,7 @@ jobs:
       - name: Auto-approve PR
         if: steps.check.outputs.needs_sync == 'true'
         env:
-          GH_TOKEN: ${{ secrets.approval_token }}
+          GH_TOKEN: ${{ secrets.approval_token || github.token }}
         run: |
           gh pr review "${{ env.pr_number }}" --approve || echo "Auto-approve not available, PR left open"
 
