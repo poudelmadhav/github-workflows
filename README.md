@@ -94,7 +94,7 @@ on:
 
 jobs:
   test:
-    uses: poudelmadhav/github-workflows/.github/workflows/ruby-tests.yml@v3
+    uses: poudelmadhav/github-workflows/.github/workflows/ruby-tests.yml@v5
     with:
       ruby_version: 3.3
       rubocop: false
@@ -104,6 +104,6 @@ jobs:
 
 | Input          | Required | Default | Description                                                    |
 | -------------- | -------- | ------- | -------------------------------------------------------------- |
-| `ruby_version` | no       | —       | Ruby version. Falls back to `.ruby-version`, then `3.4`.       |
+| `ruby_version` | no       | —       | Ruby version. Falls back to `.ruby-version`, then `4.0`.       |
 | `rubocop`      | no       | `true`  | Run RuboCop                                                    |
 | `rspec`        | no       | `true`  | Run RSpec                                                      |
